@@ -1,7 +1,7 @@
-// Admin Dashboard JavaScript
+// Admin Dashboard JavaScript with MongoDB integration
 class AdminDashboard {
     constructor() {
-        this.adminPassword = 'Theo12345?';
+        this.API_BASE = window.location.origin;
         this.init();
     }
 
@@ -29,16 +29,32 @@ class AdminDashboard {
         }
     }
 
-    handleLogin(e) {
+    async handleLogin(e) {
         e.preventDefault();
         const password = document.getElementById('password').value;
         const errorDiv = document.getElementById('login-error');
 
-        if (password === this.adminPassword) {
-            sessionStorage.setItem('adminAuthenticated', 'true');
-            this.showDashboard();
-            errorDiv.classList.add('hidden');
-        } else {
+        try {
+            const response = await fetch(`${this.API_BASE}/api/admin/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                sessionStorage.setItem('adminAuthenticated', 'true');
+                this.showDashboard();
+                errorDiv.classList.add('hidden');
+            } else {
+                errorDiv.classList.remove('hidden');
+                document.getElementById('password').value = '';
+            }
+        } catch (error) {
+            console.error('Login error:', error);
             errorDiv.classList.remove('hidden');
             document.getElementById('password').value = '';
         }
@@ -60,20 +76,27 @@ class AdminDashboard {
         this.loadRequests();
     }
 
-    loadRequests() {
-        const requests = this.getRequests();
-        const totalCount = document.getElementById('total-count');
-        const noRequestsDiv = document.getElementById('no-requests');
-        const requestsContainer = document.getElementById('requests-container');
+    async loadRequests() {
+        try {
+            const response = await fetch(`${this.API_BASE}/api/requests`);
+            const requests = await response.json();
+            
+            const totalCount = document.getElementById('total-count');
+            const noRequestsDiv = document.getElementById('no-requests');
+            const requestsContainer = document.getElementById('requests-container');
 
-        totalCount.textContent = requests.length;
+            totalCount.textContent = requests.length;
 
-        if (requests.length === 0) {
-            noRequestsDiv.classList.remove('hidden');
-            requestsContainer.innerHTML = '';
-        } else {
-            noRequestsDiv.classList.add('hidden');
-            this.renderRequests(requests);
+            if (requests.length === 0) {
+                noRequestsDiv.classList.remove('hidden');
+                requestsContainer.innerHTML = '';
+            } else {
+                noRequestsDiv.classList.add('hidden');
+                this.renderRequests(requests);
+            }
+        } catch (error) {
+            console.error('Error loading requests:', error);
+            this.showNotification('Error loading requests', 'error');
         }
     }
 
@@ -81,7 +104,7 @@ class AdminDashboard {
         const container = document.getElementById('requests-container');
         
         container.innerHTML = requests.map(request => `
-            <div class="request-card" data-id="${request.id}">
+            <div class="request-card" data-id="${request._id}">
                 <div class="request-header">
                     <div class="request-info">
                         <h3>${this.escapeHtml(request.songTitle)}</h3>
@@ -91,7 +114,7 @@ class AdminDashboard {
                             <p>Submitted: ${this.formatDate(request.timestamp)}</p>
                         </div>
                     </div>
-                    <button class="complete-btn" onclick="adminDashboard.completeRequest(${request.id})">
+                    <button class="complete-btn" onclick="adminDashboard.completeRequest('${request._id}')">
                         ✓ Complete
                     </button>
                 </div>
@@ -99,21 +122,26 @@ class AdminDashboard {
         `).join('');
     }
 
-    completeRequest(id) {
+    async completeRequest(id) {
         if (confirm('Mark this request as completed? This will remove it from the list.')) {
-            let requests = this.getRequests();
-            requests = requests.filter(request => request.id !== id);
-            localStorage.setItem('songRequests', JSON.stringify(requests));
-            this.loadRequests();
-            
-            // Show success feedback
-            this.showNotification('Request completed successfully!', 'success');
-        }
-    }
+            try {
+                const response = await fetch(`${this.API_BASE}/api/requests/${id}/complete`, {
+                    method: 'PUT'
+                });
 
-    getRequests() {
-        const stored = localStorage.getItem('songRequests');
-        return stored ? JSON.parse(stored) : [];
+                const result = await response.json();
+                
+                if (result.success) {
+                    this.loadRequests();
+                    this.showNotification('Request completed successfully!', 'success');
+                } else {
+                    throw new Error('Failed to complete request');
+                }
+            } catch (error) {
+                console.error('Error completing request:', error);
+                this.showNotification('Error completing request', 'error');
+            }
+        }
     }
 
     formatDate(timestamp) {
@@ -143,7 +171,7 @@ class AdminDashboard {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: ${type === 'success' ? '#10B981' : '#6366F1'};
+            background: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#6366F1'};
             color: white;
             padding: 1rem;
             border-radius: 0.5rem;
