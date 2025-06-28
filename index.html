@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Request App</title>
+    <link rel="stylesheet" href="./src/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Song Request
+            </h1>
+            <p class="text-gray-300 text-lg">Request your favorite songs and see them come to life</p>
+        </div>
+
+        <div class="max-w-6xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-8 items-start">
+                <!-- Album Cover Section -->
+                <div class="order-2 lg:order-1">
+                    <div class="glass-card p-8 text-center">
+                        <div id="album-cover-container" class="mb-6">
+                            <div id="default-cover" class="w-80 h-80 mx-auto bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-white text-6xl font-bold shadow-2xl">
+                                🎵
+                            </div>
+                            <img id="album-cover" class="w-80 h-80 mx-auto rounded-2xl shadow-2xl hidden object-cover" alt="Album Cover">
+                        </div>
+                        <div id="song-info" class="hidden">
+                            <h3 id="display-song" class="text-2xl font-bold text-white mb-2"></h3>
+                            <p id="display-artist" class="text-gray-300 text-lg"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Section -->
+                <div class="order-1 lg:order-2">
+                    <div class="glass-card p-8">
+                        <form id="song-request-form" class="space-y-6">
+                            <div class="form-group">
+                                <label for="fullName" class="form-label">Full Name</label>
+                                <input type="text" id="fullName" name="fullName" class="form-input" placeholder="Enter your full name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="songTitle" class="form-label">Song Title</label>
+                                <input type="text" id="songTitle" name="songTitle" class="form-input" placeholder="Enter song title" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="songArtist" class="form-label">Song Artist</label>
+                                <input type="text" id="songArtist" name="songArtist" class="form-input" placeholder="Enter artist name" required>
+                            </div>
+
+                            <button type="submit" class="btn-primary w-full">
+                                <span class="btn-text">Submit Request</span>
+                                <div class="btn-loader hidden">
+                                    <div class="spinner"></div>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <a href="admin.html" class="text-purple-300 hover:text-purple-200 transition-colors duration-200 text-sm">
+                            Admin Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="text-center">
+                <div class="success-icon">✓</div>
+                <h3 class="text-2xl font-bold text-white mb-2">Request Submitted!</h3>
+                <p class="text-gray-300 mb-6">Your song request has been added to the queue.</p>
+                <button id="close-modal" class="btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+</body>
+</html>
