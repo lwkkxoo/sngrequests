@@ -1,13 +1,12 @@
-// Song Request App - Main JavaScript
+// Song Request App - Main JavaScript with MongoDB integration
 class SongRequestApp {
     constructor() {
-        this.API_KEY = '2d1e0b1e6e9d8c4f7a3b5c8d9e2f1a4b'; // Last.fm API key (you'll need to register)
+        this.API_BASE = window.location.origin;
         this.init();
     }
 
     init() {
         this.setupEventListeners();
-        this.loadExistingData();
     }
 
     setupEventListeners() {
@@ -98,53 +97,42 @@ class SongRequestApp {
 
         const formData = new FormData(e.target);
         const requestData = {
-            id: Date.now(),
             fullName: formData.get('fullName'),
             songTitle: formData.get('songTitle'),
-            songArtist: formData.get('songArtist'),
-            timestamp: new Date().toISOString(),
-            completed: false
+            songArtist: formData.get('songArtist')
         };
 
         try {
-            // Save to localStorage (in a real app, this would be sent to a server)
-            this.saveRequest(requestData);
+            const response = await fetch(`${this.API_BASE}/api/requests`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            const result = await response.json();
             
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Reset form
-            e.target.reset();
-            this.showDefaultCover();
-            
-            // Show success modal
-            this.showSuccessModal();
+            if (result.success) {
+                // Reset form
+                e.target.reset();
+                this.showDefaultCover();
+                
+                // Show success modal
+                this.showSuccessModal();
+            } else {
+                throw new Error(result.error || 'Failed to submit request');
+            }
             
         } catch (error) {
             console.error('Error submitting request:', error);
-            alert('Error submitting request. Please try again.');
+            this.showNotification('Error submitting request. Please try again.', 'error');
         } finally {
             // Reset button state
             btnText.style.display = 'inline';
             btnLoader.classList.add('hidden');
             submitBtn.disabled = false;
         }
-    }
-
-    saveRequest(requestData) {
-        const requests = this.getRequests();
-        requests.push(requestData);
-        localStorage.setItem('songRequests', JSON.stringify(requests));
-    }
-
-    getRequests() {
-        const stored = localStorage.getItem('songRequests');
-        return stored ? JSON.parse(stored) : [];
-    }
-
-    loadExistingData() {
-        // This method can be extended to show recent requests or other data
-        console.log('App initialized with', this.getRequests().length, 'existing requests');
     }
 
     showSuccessModal() {
@@ -156,7 +144,78 @@ class SongRequestApp {
         const modal = document.getElementById('success-modal');
         modal.classList.add('hidden');
     }
+
+    showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <span>${message}</span>
+                <button onclick="this.parentNode.parentNode.remove()">×</button>
+            </div>
+        `;
+        
+        // Add styles
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#6366F1'};
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        `;
+        
+        notification.querySelector('.notification-content').style.cssText = `
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        `;
+        
+        notification.querySelector('button').style.cssText = `
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 3000);
+    }
 }
+
+// Add animation styles
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+`;
+document.head.appendChild(style);
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
