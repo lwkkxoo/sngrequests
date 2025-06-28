@@ -4,13 +4,20 @@
 @tailwind utilities;
 
 :root {
-  --primary: #8B5CF6;
-  --primary-dark: #7C3AED;
-  --secondary: #6366F1;
+  --primary: #7C3AED;
+  --primary-light: #8B5CF6;
+  --primary-dark: #6D28D9;
+  --secondary: #3B82F6;
+  --secondary-light: #60A5FA;
   --accent: #EC4899;
   --success: #10B981;
   --warning: #F59E0B;
   --error: #EF4444;
+  --text-primary: #FFFFFF;
+  --text-secondary: #E5E7EB;
+  --text-muted: #9CA3AF;
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.15);
 }
 
 * {
@@ -20,8 +27,10 @@
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.6;
-  color: #ffffff;
+  color: var(--text-primary);
   overflow-x: hidden;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 25%, #3730a3 50%, #1e40af 75%, #1e3a8a 100%);
+  min-height: 100vh;
 }
 
 .container {
@@ -32,18 +41,18 @@ body {
 
 /* Glass morphism effect */
 .glass-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
   border-radius: 1rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   transition: all 0.3s ease;
 }
 
 .glass-card:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.12);
   transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
 }
 
 /* Form styles */
@@ -54,8 +63,8 @@ body {
 .form-label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #ffffff;
+  font-weight: 600;
+  color: var(--text-primary);
   font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -63,34 +72,37 @@ body {
 
 .form-input {
   width: 100%;
-  padding: 0.875rem 1rem;
+  padding: 1rem 1.25rem;
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0.5rem;
-  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.75rem;
+  color: var(--text-primary);
   font-size: 1rem;
+  font-weight: 500;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
 }
 
 .form-input:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--primary-light);
   background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+  transform: translateY(-1px);
 }
 
 .form-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
+  font-weight: 400;
 }
 
 /* Button styles */
 .btn-primary {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
+  color: var(--text-primary);
   border: none;
   padding: 1rem 2rem;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -101,11 +113,13 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.6);
+  background: linear-gradient(135deg, var(--primary-light), var(--secondary-light));
 }
 
 .btn-primary:active {
@@ -114,11 +128,11 @@ body {
 
 .btn-secondary {
   background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
+  border-radius: 0.75rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
@@ -129,7 +143,9 @@ body {
 
 .btn-secondary:hover {
   background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
 }
 
 /* Loading spinner */
@@ -137,7 +153,7 @@ body {
   width: 20px;
   height: 20px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid white;
+  border-top: 2px solid var(--text-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -165,9 +181,9 @@ body {
 }
 
 .modal-content {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--glass-border);
   border-radius: 1rem;
   padding: 2rem;
   max-width: 400px;
@@ -186,7 +202,7 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  color: white;
+  color: var(--text-primary);
   margin: 0 auto 1rem;
   animation: bounce 0.6s ease;
 }
@@ -207,8 +223,8 @@ body {
 
 /* Request card styles */
 .request-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   border-radius: 0.75rem;
   padding: 1.5rem;
   transition: all 0.3s ease;
@@ -217,8 +233,9 @@ body {
 }
 
 .request-card:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.12);
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .request-card::before {
@@ -233,7 +250,7 @@ body {
 
 .request-header {
   display: flex;
-  justify-content: between;
+  justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
   gap: 1rem;
@@ -241,38 +258,55 @@ body {
 
 .request-info h3 {
   font-size: 1.25rem;
-  font-weight: 600;
-  color: white;
+  font-weight: 700;
+  color: var(--text-primary);
   margin-bottom: 0.25rem;
 }
 
 .request-info p {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   margin-bottom: 0.125rem;
+  font-weight: 500;
+}
+
+.request-info strong {
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 .request-meta {
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
   margin-top: 0.5rem;
+  font-weight: 500;
 }
 
 .complete-btn {
   background: var(--success);
-  color: white;
+  color: var(--text-primary);
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
 .complete-btn:hover {
   background: #059669;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* Title styling */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-light), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Responsive design */
@@ -293,6 +327,10 @@ body {
   .complete-btn {
     align-self: flex-start;
   }
+  
+  .form-input {
+    padding: 0.875rem 1rem;
+  }
 }
 
 /* Utility classes */
@@ -312,6 +350,7 @@ body {
 .mb-4 { margin-bottom: 1rem; }
 .mb-6 { margin-bottom: 1.5rem; }
 .mb-8 { margin-bottom: 2rem; }
+.mb-12 { margin-bottom: 3rem; }
 
 .flex {
   display: flex;
@@ -321,12 +360,28 @@ body {
   align-items: center;
 }
 
+.items-start {
+  align-items: flex-start;
+}
+
 .justify-between {
   justify-content: space-between;
 }
 
+.justify-center {
+  justify-content: center;
+}
+
 .gap-4 {
   gap: 1rem;
+}
+
+.gap-6 {
+  gap: 1.5rem;
+}
+
+.gap-8 {
+  gap: 2rem;
 }
 
 .grid {
@@ -340,3 +395,53 @@ body {
 .space-y-6 > * + * {
   margin-top: 1.5rem;
 }
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.max-w-6xl {
+  max-width: 72rem;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.py-12 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.order-1 {
+  order: 1;
+}
+
+.order-2 {
+  order: 2;
+}
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  .lg\:order-1 {
+    order: 1;
+  }
+  
+  .lg\:order-2 {
+    order: 2;
+  }
+}}
